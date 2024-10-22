@@ -1,0 +1,1 @@
+export { Attachments,EmailTemplateType } from './email-template.type';

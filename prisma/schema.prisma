@@ -1,0 +1,240 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+
+  @@map("genders")
+}
+
+enum NotificationType {
+  EMAIL
+  SMS
+
+  @@map("notification_type")
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  APPROVED
+  COMPLETED
+  CANCELLED
+
+  @@map("appointment_status")
+}
+
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+  CANCELLED_BY_SYSTEM
+  CANCELLED_BY_USER
+
+  @@map("slot_status")
+}
+
+enum UserAccountStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+  TEMPORARY_BLOCKED
+
+  @@map("user_account_status")
+}
+
+enum AccountBlockedReason {
+  INVALID_PASSWORD
+  TOO_MANY_FAILED_ATTEMPTS
+  BLOCKED_BY_ADMIN
+
+  @@map("account_locked_reason")
+}
+
+enum AccountDeletedReason {
+  DELETED_BY_USER
+  DELETED_BY_ADMIN
+  BLACKLISTED
+  USER_NOT_VERIFIED
+  TERMS_VIOLATION
+
+  @@map("account_deleted_reason")
+}
+
+model Doctor {
+  id                Int               @id @default(autoincrement())
+  doctorCode        Int               @unique @map("doctor_code")
+  fullName          String            @map("full_name")
+  firstName         String            @map("first_name")
+  lastName          String            @map("last_name")
+  gender            String
+  dateOfBirth       DateTime          @map("date_of_birth")
+  email             String
+  phone             String
+  polyclinicID      Int               @map("polyclinic_id")
+  hospitalID        Int               @map("hospital_id")
+  yearsOfExperience Int               @map("years_of_experience")
+  isOnLeave         Boolean           @default(false) @map("is_on_leave")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  Polyclinic        Polyclinic        @relation(fields: [polyclinicID], references: [id])
+  Hospital          Hospital          @relation(fields: [hospitalID], references: [id])
+  AppointmentSlot   AppointmentSlot[]
+  Appointment       Appointment[]
+
+  @@index([doctorCode], name: "idx_doc_doctor_code")
+  @@index([polyclinicID], name: "idx_doc_polyclinic_id")
+  @@index([hospitalID], name: "idx_doc_hospital_id")
+  @@index([fullName], name: "idx_doc_full_name")
+  @@map("doctor")
+}
+
+model Polyclinic {
+  id     Int      @id @default(autoincrement())
+  name   String
+  code   String
+  Doctor Doctor[]
+
+  @@index([code], name: "idx_polyclinic_code")
+  @@map("polyclinic")
+}
+
+model Hospital {
+  id           Int      @id @default(autoincrement())
+  hospitalCode String   @unique @map("hospital_code")
+  name         String
+  address      String
+  city         String
+  state        String
+  district     String
+  postalCode   String   @map("postal_code")
+  phone        String
+  email        String
+  website      String
+  latitude     Float
+  longitude    Float
+  Doctor       Doctor[]
+
+  @@index([hospitalCode], name: "idx_hos_hospital_code")
+  @@map("hospital")
+}
+
+model AppointmentSlot {
+  id                  Int           @id @default(autoincrement())
+  appointmentSlotCode String        @unique @map("appointment_slot_code")
+  doctorID            Int           @map("doctor_id")
+  appointmentDate     DateTime      @map("appointment_date") @db.Timestamp()
+  status              SlotStatus    @default(AVAILABLE)
+  Doctor              Doctor        @relation(fields: [doctorID], references: [id])
+  Appointment         Appointment[]
+
+  @@index([doctorID], name: "idx_as_doctor_id")
+  @@index([appointmentSlotCode], name: "idx_as_appointment_slot_code")
+  @@map("appointment_slot")
+}
+
+model Appointment {
+  id                                    Int               @id @default(autoincrement())
+  patientID                             Int               @map("patient_id")
+  doctorID                              Int               @map("doctor_id")
+  appointmentSlotID                     Int               @map("appointment_slot_id")
+  appointmentStatus                     AppointmentStatus @default(SCHEDULED)
+  reservedAt                            DateTime          @map("reserved_at")
+  cancelledAt                           DateTime?         @map("cancelled_at")
+  completedAt                           DateTime?         @map("completed_at")
+  isUpcomingAppointmentReminderMailSent Boolean           @default(false) @map("is_upcoming_appointment_reminder_mail_sent")
+  upcomingAppointmentApproveDate        DateTime?         @map("upcoming_appointment_approve_date")
+  appointmentApprovedAt                 DateTime?         @map("appointment_approved_at")
+  Doctor                                Doctor            @relation(fields: [doctorID], references: [id])
+  Patient                               User              @relation(fields: [patientID], references: [id])
+  AppointmentSlot                       AppointmentSlot   @relation(fields: [appointmentSlotID], references: [id])
+
+  @@index([patientID], name: "idx_sch_patient_id")
+  @@index([doctorID], name: "idx_sch_doctor_id")
+  @@index([appointmentSlotID], name: "idx_sch_appointment_slot_id")
+  @@map("appointment")
+}
+
+model User {
+  id                  Int               @id @default(autoincrement())
+  userCode            Int               @unique @map("user_code")
+  firstName           String            @map("first_name") @db.VarChar(40)
+  lastName            String            @map("last_name") @db.VarChar(40)
+  fullName            String            @map("full_name") @db.VarChar(80)
+  gender              Gender
+  birthDate           DateTime          @map("birth_date") @db.Date()
+  email               String            @unique
+  phone               String            @unique
+  password            String
+  isPhoneVerified     Boolean           @default(false) @map("is_phone_verified")
+  isEmailVerified     Boolean           @default(false) @map("is_email_verified")
+  createdAt           DateTime          @map("created_at")
+  updatedAt           DateTime          @map("updated_at")
+  status              UserAccountStatus @default(ACTIVE) @map("status")
+  verifiedAt          DateTime?         @map("verified_at")
+  failedLoginAttempts Int               @default(0) @map("failed_login_attempts")
+  OneTimePassword     OneTimePassword?
+  Appointment         Appointment[]
+  BlockedUser         BlockedUser?
+  DeletedUser         DeletedUser?
+
+  @@index([firstName, lastName], name: "idx_full_name")
+  @@index([userCode], name: "idx_usr_user_code")
+  @@map("users")
+}
+
+model BlockedUser {
+  id           Int                  @id @default(autoincrement())
+  userID       Int                  @unique @map("user_id")
+  blockedAt    DateTime             @map("blocked_at")
+  reason       AccountBlockedReason
+  blockedUntil DateTime?            @map("blocked_until")
+  User         User                 @relation(fields: [userID], references: [id])
+
+  @@index([userID], name: "idx_bu_user_id")
+  @@map("blocked_user")
+}
+
+model DeletedUser {
+  id        Int                  @id @default(autoincrement())
+  userID    Int                  @unique @map("user_id")
+  deletedAt DateTime             @map("deleted_at")
+  reason    AccountDeletedReason
+  User      User                 @relation(fields: [userID], references: [id])
+
+  @@index([userID], name: "idx_du_user_id")
+  @@map("deleted_user")
+}
+
+model OneTimePassword {
+  id        Int      @id @default(autoincrement())
+  userID    Int      @unique @map("user_id")
+  code      Int      @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @map("created_at")
+  User      User     @relation(fields: [userID], references: [id])
+
+  @@index([code], name: "idx_otp_code")
+  @@index([userID], name: "idx_otp_user_id")
+  @@map("one_time_password")
+}
+
+model NotificationTemplate {
+  id                    Int              @id @default(autoincrement())
+  code                  String
+  emailTemplateFileName String?          @unique @map("email_template_filename")
+  phoneTemplateContent  String?          @map("phone_template_content")
+  description           String?          @map("description")
+  params                String[]         @map("params")
+  subject               String?
+  type                  NotificationType
+
+  @@index([code], name: "idx_code")
+  @@index([type], name: "idx_type")
+  @@map("notification_template")
+}

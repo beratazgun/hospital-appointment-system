@@ -1,0 +1,122 @@
+services:
+  mongodb:
+    image: 'mongo:latest'
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data:/data/mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    networks:
+      - has-network
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis/redis-data:/data
+    networks:
+      - has-network
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./data/postgres/postgres-data:/var/lib/postgresql/data
+    networks:
+      - has-network
+
+  rabbitmq:
+    image: rabbitmq:3.13.7-management
+    restart: on-failure
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - has-network
+
+  nginx:
+    restart: on-failure
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3000:3000'
+    networks:
+      - has-network
+
+  notification-service:
+    image: 'node:22-bullseye'
+    working_dir: '/notification-service'
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - '.:/notification-service'
+    ports:
+      - '3002:3002'
+    command: 'npm run start:dev notification-service'
+    env_file:
+      - ./config/.env.development
+    networks:
+      - has-network
+    depends_on:
+      - mongodb
+      - redis
+      - postgres
+      - rabbitmq
+
+  backend-service:
+    image: 'node:22-bullseye'
+    working_dir: '/backend-service'
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - '.:/backend-service'
+    ports:
+      - '3001:3001'
+    command: 'npm run start:dev backend-service'
+    env_file:
+      - ./config/.env.development
+    networks:
+      - has-network
+    depends_on:
+      - mongodb
+      - redis
+      - postgres
+      - rabbitmq
+
+  # prisma-studio:
+  #   container_name: prisma-studio
+  #   image: timothyjmiller/prisma-studio:latest
+  #   restart: unless-stopped
+  #   env_file:
+  #     - ./config/.env.development
+  #   ports:
+  #     - 5555:5555
+  #   networks:
+  #     - has-network
+  #   environment:
+  #     - PROJECT_NAME=hospital-appointment-system
+  #     - POSTGRES_DATABASE=has-db
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_USERNAME=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_PORT=5432
+  #     - PRISMA_STUDIO_PORT=5555
+
+networks:
+  has-network:
+    driver: bridge

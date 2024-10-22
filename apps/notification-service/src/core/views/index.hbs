@@ -1,0 +1,102 @@
+<html dir='ltr' lang='en'>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body
+    style='font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;margin:auto;padding:20px;max-width:550px;margin-top:40px;border-radius:10px;padding-right:20px;padding-left:20px;height: fit-content;'
+  >
+    <div
+      style='max-width: 600px; margin: 0 auto; padding: 30px; background-color: #ffffff; color: #333333; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'
+    >
+      {{! CONTENT Start }}
+      <section
+        style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding-top: 20px; background-color: #ffffff; color: #333333;'
+      >
+        <p
+          style='font-size: 20px; line-height: 1.6; margin: 0 0 20px 0; color: #2c2124; font-weight: 600; text-align: start; padding: 0;'
+        >
+          Hello
+          {{{FULL_NAME}}},
+        </p>
+
+        <p
+          style='font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; color: #333333;'
+        >
+          We regret to inform you that your appointment has been cancelled
+          because you did not attend the scheduled time. Below are the details
+          of the cancelled appointment:
+        </p>
+
+        <table
+          style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'
+        >
+          <tr>
+            <td style='font-weight: bold; padding: 8px 0;'>Hospital:</td>
+            <td style='padding: 8px 0;'>{{{HOSPITAL_NAME}}}</td>
+          </tr>
+          <tr>
+            <td style='font-weight: bold; padding: 8px 0;'>Polyclinic:</td>
+            <td style='padding: 8px 0;'>{{{POLYCLINIC_NAME}}}</td>
+          </tr>
+          <tr>
+            <td style='font-weight: bold; padding: 8px 0;'>Doctor:</td>
+            <td style='padding: 8px 0;'>{{{DOCTOR_NAME}}}</td>
+          </tr>
+          <tr>
+            <td style='font-weight: bold; padding: 8px 0;'>Appointment Time:</td>
+            <td style='padding: 8px 0;'>{{{APPOINTMENT_DATE}}}</td>
+          </tr>
+          <tr>
+            <td style='font-weight: bold; padding: 8px 0;'>Address:</td>
+            <td style='padding: 8px 0;'>{{{HOSPITAL_ADDRESS}}}</td>
+          </tr>
+        </table>
+
+        <div
+          style='font-size: 16px; line-height: 1.6; margin-top: 20px; padding: 10px; background-color: #f4f4f4; border-left: 4px solid #2c2124;'
+        >
+          <p style='margin: 0;'>
+            The system has automatically cancelled your appointment due to
+            non-attendance. If you wish to reschedule, please use the button
+            below or contact our customer service for further assistance.
+          </p>
+        </div>
+
+        <div style='padding-top: 10px; text-align: center;'>
+          <a
+            href='https://example.com/reschedule'
+            style='display: inline-block; color: #ffffff; text-decoration: none; background-color: #2c2124; font-size: 18px; font-weight: bold; padding: 18px 48px; border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);'
+            target='_blank'
+          >
+            Reschedule Appointment
+          </a>
+        </div>
+
+        <p
+          style='font-size: 16px; line-height: 1.6; margin: 20px 0 20px 0; color: #333333;'
+        >
+          Thank you for your understanding. If you have any further questions,
+          please do not hesitate to contact us.
+        </p>
+
+        <hr
+          style='width: 100%; border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;'
+        />
+
+        <footer
+          style='font-size: 14px; line-height: 1.6; color: #666666; margin-top: 30px;'
+        >
+          <p
+            style='font-size: 14px; line-height: 1.6; margin: 0; color: #666666;'
+          >
+            This email was sent to inform you about the cancellation of your
+            appointment due to non-attendance. Please use the provided options
+            if you need to reschedule.
+          </p>
+        </footer>
+      </section>
+      {{! CONTENT End}}
+
+    </div>
+  </body>
+</html>
