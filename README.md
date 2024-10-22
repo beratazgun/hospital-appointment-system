@@ -35,6 +35,11 @@ Bu proje, kullanıcıların randevu sistemi üzerinde kolay ve hızlı bir şeki
 - **Rabbitmq:** Mesajlaşma aracı olan RabbitMQ, uygulamalar arasında güvenli ve hızlı veri iletişimini sağlar.
 - **Nginx:** Web sunucusu olan Nginx, yüksek performanslı ve güvenli bir şekilde web uygulamalarını yayınlamayı sağlar.
 
+### Veritabanı Tasarımı
+
+![database-design](https://github.com/user-attachments/assets/a5bc61c5-3d53-4935-985a-15ec6642f152)
+
+
 ## Özellikler
 
 ### Kimlik Doğrulama
