@@ -92,8 +92,6 @@ Bu proje, kullanıcıların randevu sistemi üzerinde kolay ve hızlı bir şeki
 
 ---
 
----
-
 ## **CLI Yapısı**
 
 Sistemin önemli bir parçası olan **CLI** araçları, hem operasyonel işlemleri hızlandırmak hem de kod organizasyonunu sağlamak için kullanılır. CLI komutları, CQRS (Command Query Responsibility Segregation) için dosya oluşturma işlemleri ve Prisma komutlarını Docker container'larında çalıştırma gibi görevleri yerine getirir.
