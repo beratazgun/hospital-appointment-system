@@ -46,14 +46,14 @@ export class CreateAppointmentHandler
     /**
      * Check if appointment date is already passed
      */
-    // if (
-    //   isAfter(
-    //     toZonedTime(new Date(), 'Europe/Istanbul'),
-    //     isAppointmentExist.appointmentDate,
-    //   )
-    // ) {
-    //   return new BadRequestException('Appointment date is already passed');
-    // }
+    if (
+      isAfter(
+        toZonedTime(new Date(), 'Europe/Istanbul'),
+        isAppointmentExist.appointmentDate,
+      )
+    ) {
+      return new BadRequestException('Appointment date is already passed');
+    }
 
     const checkUserOtherAppointment =
       await this.appointmentRepository.checkUserOtherAppointments(
