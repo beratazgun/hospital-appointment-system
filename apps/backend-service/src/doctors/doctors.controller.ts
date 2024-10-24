@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { QueryBus } from '@nestjs/cqrs';
+import { ApiTags } from '@nestjs/swagger';
 import { GetAllDoctorsQuery } from './query/impl/get-all-doctors.impl';
 import { DoctorsQueryDto, DoctorsSearchQueryDto } from './dtos';
 import { DoctorsSearchQuery } from './query/impl/doctors-search.impl';
@@ -8,10 +8,7 @@ import { DoctorsSearchQuery } from './query/impl/doctors-search.impl';
 @ApiTags('doctors')
 @Controller('doctors')
 export class DoctorsController {
-  constructor(
-    private readonly commandBus: CommandBus,
-    private readonly queryBus: QueryBus,
-  ) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
   /**
    * Get all doctors
