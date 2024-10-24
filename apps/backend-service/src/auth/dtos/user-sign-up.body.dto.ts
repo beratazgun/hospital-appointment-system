@@ -1,3 +1,4 @@
+import { IsPasswordStrong } from '@backend/core/decorators/Is-password-strong.decorator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '@prisma/client';
 import {
@@ -37,6 +38,7 @@ export class UserSignupBodyDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
+  @IsPasswordStrong()
   password: string;
 
   @IsString()
