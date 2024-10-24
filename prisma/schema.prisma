@@ -125,13 +125,13 @@ model Hospital {
 }
 
 model AppointmentSlot {
-  id                  Int           @id @default(autoincrement())
-  appointmentSlotCode String        @unique @map("appointment_slot_code")
-  doctorID            Int           @map("doctor_id")
-  appointmentDate     DateTime      @map("appointment_date") @db.Timestamp()
-  status              SlotStatus    @default(AVAILABLE)
-  Doctor              Doctor        @relation(fields: [doctorID], references: [id])
-  Appointment         Appointment[]
+  id                  Int          @id @default(autoincrement())
+  appointmentSlotCode String       @unique @map("appointment_slot_code")
+  doctorID            Int          @map("doctor_id")
+  appointmentDate     DateTime     @map("appointment_date") @db.Timestamp()
+  status              SlotStatus   @default(AVAILABLE)
+  Doctor              Doctor       @relation(fields: [doctorID], references: [id])
+  Appointment         Appointment?
 
   @@index([doctorID], name: "idx_as_doctor_id")
   @@index([appointmentSlotCode], name: "idx_as_appointment_slot_code")
@@ -142,7 +142,7 @@ model Appointment {
   id                                    Int               @id @default(autoincrement())
   patientID                             Int               @map("patient_id")
   doctorID                              Int               @map("doctor_id")
-  appointmentSlotID                     Int               @map("appointment_slot_id")
+  appointmentSlotID                     Int               @unique @map("appointment_slot_id") // Unique to enforce one-to-one
   appointmentStatus                     AppointmentStatus @default(SCHEDULED)
   reservedAt                            DateTime          @map("reserved_at")
   cancelledAt                           DateTime?         @map("cancelled_at")
