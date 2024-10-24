@@ -2,7 +2,7 @@ import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { ApproveAppointmentCommand } from '@backend/appointment/command/impl/approve-appointment.impl';
 import { HttpResponse } from '@common/helpers/http-response';
 import { AppointmentRepository } from '@backend/appointment/repository/appointment.repository';
-import { BadRequestException, ConflictException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { isAfter, isBefore } from 'date-fns';
 import { appointmentModelInstance } from '@backend/appointment/model/appointment.model';
 import { toZonedTime } from 'date-fns-tz';
