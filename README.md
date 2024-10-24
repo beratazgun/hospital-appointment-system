@@ -28,12 +28,13 @@ Bu proje, kullanıcıların randevu sistemi üzerinde kolay ve hızlı bir şeki
 
 ### Teknolojiler
 
-- **NestJS:** Node.js tabanlı bir framework olan NestJS, modüler yapı ve TypeScript desteği ile geliştirme süreçlerini hızlandırır.
-- **Prisma:** ORM (Object-Relational Mapping) aracı olan Prisma, veritabanı işlemlerini kolaylaştırır ve hızlandırır.
-- **MongoDB:** NoSQL veritabanı olan MongoDB, veri depolama ve işleme süreçlerini optimize eder.
-- **Docker:** Konteyner teknolojisi olan Docker, uygulamaların hızlı ve güvenli bir şekilde çalıştırılmasını sağlar.
-- **Rabbitmq:** Mesajlaşma aracı olan RabbitMQ, uygulamalar arasında güvenli ve hızlı veri iletişimini sağlar.
-- **Nginx:** Web sunucusu olan Nginx, yüksek performanslı ve güvenli bir şekilde web uygulamalarını yayınlamayı sağlar.
+- **NestJS:**
+- **Prisma:**
+- **MongoDB:**
+- **Docker:**
+- **Rabbitmq:**
+- **Nginx:**
+- **Resend:**
 
 ### Veritabanı Tasarımı
 
@@ -76,6 +77,8 @@ Bu proje, kullanıcıların randevu sistemi üzerinde kolay ve hızlı bir şeki
 - ✅ **Randevu iptali sonrası e-mail gönderme:** İptal durumunda bildirim.
 - ✅ **Yaklaşan randevu için e-mail gönderme:** Hatırlatma e-postası gönderilir.
 - ✅ **Şifre sıfırlama e-mail gönderme:** Şifre sıfırlama linki sağlanır.
+- ✅ **şifre güncelleme sonrası e-mail gönderme:** Şifre güncelleme işlemi tamamlandığında.
+- ✅ **Randevu sistem tarafından iptal edilince e-mail gönderme:** Sistem tarafından iptal edilen randevular için.
 
 ### JOB Yönetimi
 
@@ -86,6 +89,7 @@ Bu proje, kullanıcıların randevu sistemi üzerinde kolay ve hızlı bir şeki
 ### Loglama
 
 - ✅ **Kullanıcı işlemleri loglama:** Tüm kullanıcı eylemleri kaydedilir.
+- ✅ **Kimlik doğrulama işlemleri loglama:** Oturum açma ve çıkış işlemleri izlenir.
 - ✅ **Randevu işlemleri loglama:** Randevu yönetimine dair işlemler kayıt altına alınır.
 - ✅ **Doktor işlemleri loglama:** Doktorla ilgili operasyonlar takip edilir.
 - ✅ **E-mail işlemleri loglama:** E-posta gönderim süreçleri izlenir.
@@ -95,7 +99,9 @@ Bu proje, kullanıcıların randevu sistemi üzerinde kolay ve hızlı bir şeki
 
 - ✅ **Doktor arama:** Kullanıcılar hızlıca doktor arayabilir ve detaylı bilgilere ulaşabilir.
 
----
+### Filtreleme
+
+- ✅ **Randevu filtreleme:** Kullanıcılar randevuları tarih, doktor, şehir, ilçe, hastane bilgilerine göre filtreleyebilir.
 
 ## **CLI Yapısı**
 
@@ -158,6 +164,8 @@ Proje, Docker container'larında çalıştırılmak üzere yapılandırılmışt
 
 ```bash
 $ npm install
+
+$ cp ./config/.env.example ./config/.env.development
 
 $ docker-compose up --build
 ```
