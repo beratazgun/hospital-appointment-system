@@ -3,7 +3,7 @@ import { PrismaService } from '@common/modules/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { GetAppointmentsQueryDto } from '../dtos';
 import { Paginator } from '@backend/core/helpers/paginator';
-import { endOfDay, subDays, subHours } from 'date-fns';
+import { endOfDay, subHours } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 @Injectable()
 export class AppointmentRepository {
@@ -28,6 +28,8 @@ export class AppointmentRepository {
         id: true,
         appointmentDate: true,
         status: true,
+        Appointment: true,
+        doctorID: true,
       },
     });
   }
@@ -36,46 +38,60 @@ export class AppointmentRepository {
    * Create Appointment.
    */
   async createAppointment(appointmentSlotID: number, patientID: number) {
-    return await this.prismaService.$transaction(
-      async (prisma) => {
-        const appointmentSlot = await prisma.appointmentSlot.update({
-          where: {
-            id: appointmentSlotID,
-          },
-          data: {
-            status: 'BOOKED',
-          },
-        });
+    return await this.prismaService.$transaction(async (prisma) => {
+      const appointmentSlot = await prisma.appointmentSlot.update({
+        where: {
+          id: appointmentSlotID,
+        },
+        data: {
+          status: 'BOOKED',
+        },
+      });
 
-        return await prisma.appointment.create({
-          data: {
-            patientID,
-            doctorID: appointmentSlot.doctorID,
-            appointmentSlotID: appointmentSlot.id,
-            upcomingAppointmentApproveDate: subHours(
-              appointmentSlot.appointmentDate,
-              8,
-            ),
-            reservedAt: toZonedTime(new Date(), 'Europe/Istanbul'),
+      return await prisma.appointment.upsert({
+        where: {
+          appointmentSlotID: appointmentSlotID,
+        },
+        create: {
+          upcomingAppointmentApproveDate: subHours(
+            appointmentSlot.appointmentDate,
+            8,
+          ),
+          reservedAt: toZonedTime(new Date(), 'Europe/Istanbul'),
+          AppointmentSlot: {
+            connect: {
+              id: appointmentSlot.id,
+            },
           },
-          include: {
-            AppointmentSlot: {
-              include: {
-                Doctor: {
-                  include: {
-                    Hospital: true,
-                    Polyclinic: true,
-                  },
+          Doctor: {
+            connect: {
+              id: appointmentSlot.doctorID,
+            },
+          },
+          Patient: {
+            connect: {
+              id: patientID,
+            },
+          },
+        },
+        update: {
+          appointmentStatus: 'SCHEDULED',
+          reservedAt: toZonedTime(new Date(), 'Europe/Istanbul'),
+        },
+        include: {
+          AppointmentSlot: {
+            include: {
+              Doctor: {
+                include: {
+                  Hospital: true,
+                  Polyclinic: true,
                 },
               },
             },
           },
-        });
-      },
-      {
-        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
-    );
+        },
+      });
+    });
   }
 
   /**
@@ -150,7 +166,7 @@ export class AppointmentRepository {
         },
         appointmentStatus: {
           notIn: ['CANCELLED', 'COMPLETED'],
-          in: ['SCHEDULED'],
+          in: ['SCHEDULED', 'APPROVED'],
         },
         patientID,
       },
