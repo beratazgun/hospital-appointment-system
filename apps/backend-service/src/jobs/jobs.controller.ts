@@ -27,8 +27,7 @@ export class JobsController {
   /**
    * Create appointment slots on the 15th of every month at 4pm.
    */
-  // @Cron('0 4 15 * *') // --> It will work at 4pm on the 15th of every month
-  // @Cron(CronExpression.EVERY_5_SECONDS) // --> It will work every 5 second
+  @Cron('0 4 15 * *') // --> It will work at 4pm on the 15th of every month
   async handleCreateAppointmentSlots() {
     await this.executeJob('createAppointmentSlots', () =>
       this.commandBus.execute(new CreateAppointmentSlotCommand()),
