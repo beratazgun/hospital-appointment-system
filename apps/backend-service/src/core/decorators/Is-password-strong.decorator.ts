@@ -24,7 +24,7 @@ export function IsPasswordStrong(validationOptions?: ValidationOptions) {
         message: (validationArguments) => {
           const [warning] = validationArguments.constraints;
 
-          return 'Password is too weak. ' + warning;
+          return warning.message;
         },
         ...validationOptions,
       },
@@ -43,20 +43,12 @@ export function IsPasswordStrong(validationOptions?: ValidationOptions) {
             },
           });
 
-          const { score } = await zxcvbnAsync(value);
+          const { score, feedback } = await zxcvbnAsync(value);
+
+          args.constraints[0].message =
+            feedback.warning + ' ' + feedback.suggestions.join(' ');
 
           if (score < 3) {
-            switch (score) {
-              case 0:
-                args.constraints[0] =
-                  'Password is too weak. Please use a stronger password.';
-                break;
-              default:
-                args.constraints[0] =
-                  'Password is weak. Please use a stronger password.';
-                break;
-            }
-
             return false;
           } else {
             return true;
