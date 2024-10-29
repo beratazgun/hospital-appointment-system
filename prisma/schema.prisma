@@ -142,7 +142,7 @@ model Appointment {
   id                                    Int               @id @default(autoincrement())
   patientID                             Int               @map("patient_id")
   doctorID                              Int               @map("doctor_id")
-  appointmentSlotID                     Int               @unique @map("appointment_slot_id") // Unique to enforce one-to-one
+  appointmentSlotID                     Int               @unique @map("appointment_slot_id") 
   appointmentStatus                     AppointmentStatus @default(SCHEDULED)
   reservedAt                            DateTime          @map("reserved_at")
   cancelledAt                           DateTime?         @map("cancelled_at")
